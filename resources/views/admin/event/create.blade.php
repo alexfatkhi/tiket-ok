@@ -68,7 +68,7 @@
                         <select name="lokasi" class="select select-bordered w-full" required>
                             <option value="" disabled selected>Pilih Lokasi</option>
                             @foreach ($lokasis as $lokasi)
-                            <option value="{{ $lokasi->nama }}">{{ $lokasi->nama }}</option>
+                            <option value="{{ $lokasi->nama_lokasi }}">{{ $lokasi->nama_lokasi }}</option>
                             @endforeach
                         </select>
                     </div>

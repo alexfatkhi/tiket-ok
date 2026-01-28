@@ -44,9 +44,9 @@
                         <select name="lokasi" class="select select-bordered w-full" required>
                             <option value="" disabled>Pilih Lokasi</option>
                             @foreach ($lokasis as $lokasi)
-                                <option value="{{ $lokasi->nama }}"
-                                    {{ $lokasi->nama == $event->lokasi ? 'selected' : '' }}>
-                                    {{ $lokasi->nama }}
+                                <option value="{{ $lokasi->nama_lokasi }}"
+                                    {{ $lokasi->nama_lokasi == $event->lokasi ? 'selected' : '' }}>
+                                    {{ $lokasi->nama_lokasi }}
                                 </option>
                             @endforeach
                         </select>
