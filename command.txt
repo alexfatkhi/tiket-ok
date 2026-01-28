@@ -1,0 +1,8 @@
+Pakai command:                                                                                                         
+  - Migration → php artisan make:migration                                                                               
+  - Model → php artisan make:model                                                                                       
+  - Controller → php artisan make:controller                                                                             
+  - Middleware → php artisan make:middleware                                                                             
+  - Seeder → php artisan make:seeder    
+
+  
