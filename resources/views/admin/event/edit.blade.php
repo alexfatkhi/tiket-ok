@@ -41,11 +41,11 @@
                         <label class="label">
                             <span class="label-text font-semibold">Lokasi</span>
                         </label>
-                        <select name="lokasi" class="select select-bordered w-full" required>
+                        <select name="lokasi_id" class="select select-bordered w-full" required>
                             <option value="" disabled>Pilih Lokasi</option>
                             @foreach ($lokasis as $lokasi)
-                                <option value="{{ $lokasi->nama_lokasi }}"
-                                    {{ $lokasi->nama_lokasi == $event->lokasi ? 'selected' : '' }}>
+                                <option value="{{ $lokasi->id }}"
+                                    {{ $lokasi->id == $event->lokasi_id ? 'selected' : '' }}>
                                     {{ $lokasi->nama_lokasi }}
                                 </option>
                             @endforeach

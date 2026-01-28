@@ -16,6 +16,7 @@ class LokasiSeeder extends Seeder
         $lokasiData = [
             ['nama_lokasi' => 'Stadion Utama'],
             ['nama_lokasi' => 'Galeri Seni Kota'],
+            ['nama_lokasi' => 'Taman Kota'],
         ];
 
         foreach ($lokasiData as $lokasi) {

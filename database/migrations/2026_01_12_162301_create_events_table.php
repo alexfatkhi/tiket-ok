@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('judul');
             $table->text('deskripsi');
             $table->dateTime('tanggal_waktu');
-            $table->string('lokasi');
+            $table->foreignId('lokasi_id')->constrained('lokasi')->onDelete('cascade');
             $table->foreignId('kategori_id')->constrained('kategoris')->onDelete('cascade');
             $table->string('gambar')->nullable();
             $table->timestamps();

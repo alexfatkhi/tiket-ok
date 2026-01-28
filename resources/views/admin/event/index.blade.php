@@ -37,7 +37,7 @@
                         <td>{{ $event->judul }}</td>
                         <td>{{ $event->kategori->nama }}</td>
                         <td>{{ $event->tanggal_waktu->format('d M Y') }}</td>
-                        <td>{{ $event->lokasi }}</td>
+                        <td>{{ $event->lokasi->nama_lokasi }}</td>
                         <td>
                             <a href="{{ route('admin.events.show', $event->id) }}" class="btn btn-sm btn-info mr-2">Detail</a>
                             <a href="{{ route('admin.events.edit', $event->id) }}" class="btn btn-sm btn-primary mr-2">Edit</a>
