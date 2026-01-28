@@ -1,16 +1,207 @@
-Jika besok diperlukan saat ujian, karena mengerjakan wajib menggunakan PC lab.
-Cara clone project: 
- 1.⁠ ⁠buka repository GitHub di browser, copy url repository
- 2.⁠ ⁠buat folder baru di komputer, buka di vs code
- 3.⁠ ⁠buka terminal, jalankan perintah : git clone (url repository), tunggu sampai selesai
- 4.⁠ ⁠masuk ke direktori project, menu file-open folder, pilih folder project
- 5.⁠ ⁠buka terminal, jalankan perintah : composer install, tunggu sampai selesai
- 6.⁠ ⁠buka terminal, jalankan perintah : npm install, tunggu sampai selesai
- 7.⁠ ⁠rename file .env.example menjadi .env, atur konfigurasi database (biasanya di baris 23)
- 8.⁠ ⁠buka terminal, jalankan perintah : php artisan key:generate
- 9.⁠ ⁠buka terminal, jalankan perintah : php artisan migrate
-10.⁠ ⁠buka terminal, jalankan perintah : php artisan db:seed
-11.⁠ ⁠buka terminal baru, jalankan perintah : php artisan serve
-12.⁠ ⁠buka terminal baru, jalankan perintah : npm run dev
 
-disarankan : pakai terminal yang tipenya Command Prompt
+● Update(database\migrations\2026_01_12_162301_create_events_table.php)
+  ⎿  Added 1 line, removed 1 line
+      17              $table->string('judul');
+      18              $table->text('deskripsi');
+      19              $table->dateTime('tanggal_waktu');
+      20 -            $table->string('lokasi');                                                                                                      
+      20 +            $table->foreignId('lokasi_id')->constrained('lokasi')->onDelete('cascade');                                                    
+      21              $table->foreignId('kategori_id')->constrained('kategoris')->onDelete('cascade');
+      22              $table->string('gambar')->nullable();
+      23              $table->timestamps();
+
+● Update(app\Models\Event.php)
+  ⎿  Added 1 line, removed 1 line
+      10          'judul',
+      11          'deskripsi',
+      12          'tanggal_waktu',
+      13 -        'lokasi',                                                                                                                          
+      13 +        'lokasi_id',                                                                                                                       
+      14          'kategori_id',
+      15          'gambar',
+      16          'user_id',
+
+● Update(app\Models\Event.php)
+  ⎿  Added 5 lines
+      25          return $this->belongsTo(Kategori::class);
+      26      }
+      27
+      28 +    public function lokasi()                                                                                                               
+      29 +    {                                                                                                                                      
+      30 +        return $this->belongsTo(Lokasi::class);                                                                                            
+      31 +    }                                                                                                                                      
+      32 +                                                                                                                                           
+      33      public function tikets()
+      34      {
+      35          return $this->hasMany(Tiket::class);
+
+● Update(app\Http\Controllers\Admin\EventController.php)
+  ⎿  Added 1 line, removed 1 line
+      38              'judul' => 'required|string|max:255',
+      39              'deskripsi' => 'required|string',
+      40              'tanggal_waktu' => 'required|date',
+      41 -            'lokasi' => 'required|string|max:255',                                                                                         
+      41 +            'lokasi_id' => 'required|exists:lokasi,id',                                                                                    
+      42              'kategori_id' => 'required|exists:kategoris,id',
+      43              'gambar' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+      44          ]);
+
+● Update(app\Http\Controllers\Admin\EventController.php)
+  ⎿  Added 1 line, removed 1 line
+      92                  'judul' => 'required|string|max:255',
+      93                  'deskripsi' => 'required|string',
+      94                  'tanggal_waktu' => 'required|date',
+      95 -                'lokasi' => 'required|string|max:255',                                                                                     
+      95 +                'lokasi_id' => 'required|exists:lokasi,id',                                                                                
+      96                  'kategori_id' => 'required|exists:kategoris,id',
+      97                  'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+      98              ]);
+
+● Sekarang update views.
+
+● Update(resources\views\admin\event\create.blade.php)
+  ⎿  Added 2 lines, removed 2 lines
+      65                          <label class="label">
+      66                              <span class="label-text font-semibold">Lokasi</span>
+      67                          </label>
+      68 -                        <select name="lokasi" class="select select-bordered w-full" required>                                              
+      68 +                        <select name="lokasi_id" class="select select-bordered w-full" required>                                           
+      69                              <option value="" disabled selected>Pilih Lokasi</option>
+      70                              @foreach ($lokasis as $lokasi)
+      71 -                            <option value="{{ $lokasi->nama_lokasi }}">{{ $lokasi->nama_lokasi }}</option>                                 
+      71 +                            <option value="{{ $lokasi->id }}">{{ $lokasi->nama_lokasi }}</option>                                          
+      72                              @endforeach
+      73                          </select>
+      74                      </div>
+
+● Update(resources\views\admin\event\edit.blade.php)
+  ⎿  Added 3 lines, removed 3 lines
+      41                          <label class="label">
+      42                              <span class="label-text font-semibold">Lokasi</span>
+      43                          </label>
+      44 -                        <select name="lokasi" class="select select-bordered w-full" required>                                              
+      44 +                        <select name="lokasi_id" class="select select-bordered w-full" required>                                           
+      45                              <option value="" disabled>Pilih Lokasi</option>
+      46                              @foreach ($lokasis as $lokasi)
+      47 -                                <option value="{{ $lokasi->nama_lokasi }}"                                                                 
+      48 -                                    {{ $lokasi->nama_lokasi == $event->lokasi ? 'selected' : '' }}>                                        
+      47 +                                <option value="{{ $lokasi->id }}"                                                                          
+      48 +                                    {{ $lokasi->id == $event->lokasi_id ? 'selected' : '' }}>                                              
+      49                                      {{ $lokasi->nama_lokasi }}
+      50                                  </option>
+      51                              @endforeach
+
+● Update(resources\views\admin\event\index.blade.php)
+  ⎿  Added 1 line, removed 1 line
+      37                          <td>{{ $event->judul }}</td>
+      38                          <td>{{ $event->kategori->nama }}</td>
+      39                          <td>{{ $event->tanggal_waktu->format('d M Y') }}</td>
+      40 -                        <td>{{ $event->lokasi }}</td>                                                                                      
+      40 +                        <td>{{ $event->lokasi->nama_lokasi }}</td>                                                                         
+      41                          <td>
+      42                              <a href="{{ route('admin.events.show', $event->id) }}" class="btn btn-sm btn-info mr-2">Detail</a>
+      43                              <a href="{{ route('admin.events.edit', $event->id) }}" class="btn btn-sm btn-primary mr-2">Edit</a>
+
+● Update(resources\views\admin\event\show.blade.php)
+  ⎿  Added 1 line, removed 1 line
+      55                              <span class="label-text font-semibold">Lokasi</span>
+      56                          </label>
+      57                          <input type="text" name="lokasi" placeholder="Contoh: Stadion Utama"
+      58 -                            class="input input-bordered w-full" value="{{ $event->lokasi }}" disabled required />                          
+      58 +                            class="input input-bordered w-full" value="{{ $event->lokasi->nama_lokasi }}" disabled required />             
+      59                      </div>
+      60
+      61                      <!-- Kategori -->
+
+● Update(resources\views\home.blade.php)
+  ⎿  Added 1 line, removed 1 line
+      30                  <x-user.event-card
+      31                      :title="$event->judul"
+      32                      :date="$event->tanggal_waktu"
+      33 -                    :location="$event->lokasi"                                                                                             
+      33 +                    :location="$event->lokasi->nama_lokasi"                                                                                
+      34                      :price="$event->tikets_min_harga"
+      35                      :image="$event->gambar"
+      36                      :href="route('events.show', $event)" />
+
+● Update(resources\views\events\show.blade.php)
+  ⎿  Added 1 line, removed 1 line
+      26                  <h1 class="text-3xl font-extrabold">{{ $event->judul }}</h1>
+      27                  <p class="text-sm text-gray-500 mt-1">
+      28                    {{ \Carbon\Carbon::parse($event->tanggal_waktu)->locale('id')->translatedFormat('d F Y, H:i') }} •
+      29 -                  {{ $event->lokasi }}                                                                                                     
+      29 +                  {{ $event->lokasi->nama_lokasi }}                                                                                        
+      30                  </p>
+      31
+      32                  <div class="mt-3 flex gap-2 items-center">
+
+● Sekarang update seeder.
+
+● Update(database\seeders\LokasiSeeder.php)
+  ⎿  Added 1 line
+      16          $lokasiData = [
+      17              ['nama_lokasi' => 'Stadion Utama'],
+      18              ['nama_lokasi' => 'Galeri Seni Kota'],
+      19 +            ['nama_lokasi' => 'Taman Kota'],                                                                                               
+      20          ];
+      21
+      22          foreach ($lokasiData as $lokasi) {
+
+● Update(database\seeders\EventSeeder.php)
+  ⎿  Added 3 lines, removed 3 lines
+      15                  'judul' => 'Konser Musik Rock',
+      16                  'deskripsi' => 'Nikmati malam penuh energi dengan band rock terkenal.',
+      17                  'tanggal_waktu' => '2024-08-15 19:00:00',
+      18 -                'lokasi' => 'Stadion Utama',                                                                                               
+      18 +                'lokasi_id' => 1, // Stadion Utama                                                                                         
+      19                  'kategori_id' => 1,
+      20                  'gambar' => 'events/konser_rock.jpg',
+      21              ],
+     ...
+      24                  'judul' => 'Pameran Seni Kontemporer',
+      25                  'deskripsi' => 'Jelajahi karya seni modern dari seniman lokal dan internasional.',
+      26                  'tanggal_waktu' => '2024-09-10 10:00:00',
+      27 -                'lokasi' => 'Galeri Seni Kota',                                                                                            
+      27 +                'lokasi_id' => 2, // Galeri Seni Kota                                                                                      
+      28                  'kategori_id' => 2,
+      29                  'gambar' => 'events/pameran_seni.jpg',
+      30              ],
+     ...
+      33                  'judul' => 'Festival Makanan Internasional',
+      34                  'deskripsi' => 'Cicipi berbagai hidangan lezat dari seluruh dunia.',
+      35                  'tanggal_waktu' => '2024-10-05 12:00:00',
+      36 -                'lokasi' => 'Taman Kota',                                                                                                  
+      36 +                'lokasi_id' => 3, // Taman Kota                                                                                            
+      37                  'kategori_id' => 3,
+      38                  'gambar' => 'events/festival_makanan.jpg',
+      39              ],
+
+● Saya cek juga view lain yang mungkin menampilkan lokasi.
+
+● Searched for 1 pattern, read 1 file (ctrl+o to expand)
+
+● Update(resources\views\orders\show.blade.php)
+  ⎿  Added 1 line, removed 1 line
+      14              src="{{ $order->event?->gambar ? asset('images/events/' . $order->event->gambar) :
+          'https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp' }}"
+      15              alt="{{ $order->event?->judul ?? 'Event' }}" class="w-full object-cover mb-2" />
+      16            <h2 class="font-semibold text-lg">{{ $order->event?->judul ?? 'Event' }}</h2>
+      17 -          <p class="text-sm text-gray-500 mt-1">{{ $order->event?->lokasi ?? '' }}</p>                                                     
+      17 +          <p class="text-sm text-gray-500 mt-1">{{ $order->event?->lokasi?->nama_lokasi ?? '' }}</p>                                       
+      18          </div>
+      19          <div class="card-body lg:w-2/3">
+      20
+
+● Read 1 file (ctrl+o to expand)
+
+● Update(resources\views\admin\history\show.blade.php)
+  ⎿  Added 1 line, removed 1 line
+      14              src="{{ $order->event?->gambar ? asset('images/events/' . $order->event->gambar) :
+          'https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp' }}"
+      15              alt="{{ $order->event?->judul ?? 'Event' }}" class="w-full object-cover mb-2" />
+      16            <h2 class="font-semibold text-lg">{{ $order->event?->judul ?? 'Event' }}</h2>
+      17 -          <p class="text-sm text-gray-500 mt-1">{{ $order->event?->lokasi ?? '' }}</p>                                                     
+      17 +          <p class="text-sm text-gray-500 mt-1">{{ $order->event?->lokasi?->nama_lokasi ?? '' }}</p>                                       
+      18          </div>
+      19          <div class="card-body lg:w-2/3">
+      20
